@@ -13,15 +13,15 @@ app.get('/favorite', favoriteHandller)
 function favoriteHandller(req,res){
   res.send("Welcome to Favorite Page");    
 }
+app.get("*",errorHandller)
+function errorHandller(req,res){
+    res.status(404).send("server error 404")
+}
 app.use(function(err,req,res,text){
     console.error(err.stack)
-    res.type('text/plain')
-    res.status(500)
-    res.send('internal server error 500')
+    res.status(500).send('internal server error 500')
 })
-app.get("*",(res,req)=>{
-    res.send("server error 404")
-})
+
 function jsonData(title,poster_path,overview){
     this.title=title;
     this.poster_path=poster_path;
