@@ -10,16 +10,23 @@ const apikey=process.env.api_key;
 const spiderData=require("./MovieData/data.json");
 
 app.get('/', dataHandller)
+app.get('/favorite', favoriteHandller)
+app.get('/trending', trendingHandller)
+app.get('/search', searchHandller)
+app.get('/now_playing', trendingHandller)
+app.get('/tv-airing-today', airingTodayHandller)
+app.get("*",errorHandller)
+app.use(errorHandller)
+
 function dataHandller(req,res){
     let newdatajson=new jsonData(spiderData.title,spiderData.poster_path,spiderData.overview)
         res.json(newdatajson);    
 }
-app.get('/favorite', favoriteHandller)
+
 function favoriteHandller(req,res){
   res.send("Welcome to Favorite Page");    
 }
 
-app.get('/trending', trendingHandller)
 function trendingHandller(req,res){
  
 let URL=`https://api.themoviedb.org/3/trending/all/week?api_key=${apikey}&language=en-US`;
@@ -30,29 +37,61 @@ axios.get(URL)
     })
     res.json(dataMoves)
 })
-
-
-.catch((err)=>{
-    res.send(err);
+.catch((error)=>{
+    errorHandller(error,req,res);
 })
 }
-app.get('/search', searchHandller)
+
 function searchHandller(req,res){
-    let movesName=req.query.name
+    let movesName=req.query.title
 let URL=`https://api.themoviedb.org/3/search/movie?api_key=${apikey}&query=${movesName}`;
 axios.get(URL)
 .then((result)=>{
-    console.log(result.data.results);
     res.json(result.data.results);
 })
-.catch((err)=>{
-    res.send(err);
+.catch((error)=>{
+    errorHandller(error,req,res);
 })
 }
-app.use(function(err,req,res,text){
-    console.error(err.stack)
-    res.status(500).send('internal server error 500')
+
+function trendingHandller(req,res){
+ 
+let URL=`https://api.themoviedb.org/3/movies/now-playing?api_key=${apikey}&language=en-US`;
+axios.get(URL)
+.then((result)=>{
+    let playingData =result.data.results.map((playMove)=>{
+        return new nowPlaying(playMove.id,playMove.original_title,playMove.original_language,playMove.overview)  
+    })
+    res.json(playingData)
 })
+.catch((error)=>{
+    errorHandller(error,req,res);
+})
+}
+
+function airingTodayHandller(req,res){
+ 
+let URL=`https://api.themoviedb.org/3/tv/tv-airing-today?api_key=${apikey}&language=en-US`;
+axios.get(URL)
+.then((result)=>{
+    let dataAiring =result.data.results.map((airToday)=>{
+        return new airingToday(airToday.id,airToday.name,airToday.original_language)  
+    })
+    res.json(dataAiring)
+})
+.catch((error)=>{
+    errorHandller(error,req,res);
+})
+}
+
+function errorHandller(req,res){
+    res.status(404).send("server error 404")
+}
+app.listen(port,()=>{console.log("hello" ,port);})
+
+function errorHandller(err,req,res){
+    res.status(500).send(err)
+}
 
 function jsonData(title,poster_path,overview){
     this.title=title;
@@ -66,8 +105,17 @@ this.release_date=release_date;
 this.poster_path=poster_path;
 this.overview=overview;
 }
-app.get("*",errorHandller)
-function errorHandller(req,res){
-    res.status(404).send("server error 404")
+function nowPlaying(id,original_title,original_language,overview){
+    this.id=id;
+    this.original_title=original_title;
+    this.original_language=original_language;
+    this.overview=overview;
 }
-app.listen(port,()=>{console.log("hello" ,port);})
+function airingToday(id,name,original_language){
+    this.id=id;
+    this.name=name;
+    this.original_language=original_language;
+    
+}
+
+
