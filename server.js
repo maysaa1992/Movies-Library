@@ -13,7 +13,7 @@ app.get('/', dataHandller)
 app.get('/favorite', favoriteHandller)
 app.get('/trending', trendingHandller)
 app.get('/search', searchHandller)
-app.get('/now_playing', trendingHandller)
+app.get('/now_playing', nowPlayHandller)
 app.get('/tv-airing-today', airingTodayHandller)
 app.get("*",errorHandller)
 app.use(errorHandller)
@@ -54,9 +54,9 @@ axios.get(URL)
 })
 }
 
-function trendingHandller(req,res){
+function nowPlayHandller(req,res){
  
-let URL=`https://api.themoviedb.org/3/movies/now-playing?api_key=${apikey}&language=en-US`;
+let URL=`https://api.themoviedb.org/3/movie/now_playing?api_key=${apikey}&language=en-US&page=1`;
 axios.get(URL)
 .then((result)=>{
     let playingData =result.data.results.map((playMove)=>{
@@ -71,7 +71,7 @@ axios.get(URL)
 
 function airingTodayHandller(req,res){
  
-let URL=`https://api.themoviedb.org/3/tv/tv-airing-today?api_key=${apikey}&language=en-US`;
+let URL=`https://api.themoviedb.org/3/tv/airing_today?api_key=${apikey}&language=en-US&page=1`;
 axios.get(URL)
 .then((result)=>{
     let dataAiring =result.data.results.map((airToday)=>{
