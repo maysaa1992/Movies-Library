@@ -4,11 +4,12 @@
 
 ## WRRC
 
-![WRRC imge](DataBase.jpg)
+![WRRC imge](WRRC_UPDAT_DELETE.jpg)
 
 ## Overview
 
-this code creat a server by using the **express framwork** then run the server by using the **nodemon** after that check if the server is ready to working now you can send any requset you need to the server after that send request to pot data in tha  data base by send the rerquest to the server then the server send another request to the database to insert data inside it after that you can send anothe requset to get the data from data base by send the server another request to the database to SELECT the data
+this code creat a server by using the **express framwork** then run the server by using the **nodemon** after that check if the server is ready to working now you can send any requset you need to the server after that send request to update data in tha  data base by send the rerquest to the server then the server send another request to the database to update data inside it after that you can send anothe requset to get the new data or delete spasific data from data base by send the server another request to the database to get the data or deleteing the data
+
 
 ## Getting Started
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
@@ -54,4 +55,4 @@ function handllerfunction(req,res)
 
 ## Project Features
 <!-- What are the features included in you app -->
-send the data what i need to the server to pot it inside the database by using the INSERT query then get the data from database by using SELECT query
+send the data what i need to the server to update   it inside the database by using the UPDATE query then delete the data from database by using DELETE query
