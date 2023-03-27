@@ -2,8 +2,15 @@
 const express = require('express');
 const cors=require('cors');
 const axios =require('axios');
+const bodyParser = require('body-parser')
+const { Client } = require('pg')
+let url=`postgres://maysaa:0000@localhost:5432/moves`
+const client = new Client(url)
 const app= express();
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 require('dotenv').config();
 const port = process.env.port;
 const apikey=process.env.api_key;
@@ -15,11 +22,13 @@ app.get('/trending', trendingHandller)
 app.get('/search', searchHandller)
 app.get('/now_playing', nowPlayHandller)
 app.get('/tv-airing-today', airingTodayHandller)
+app.post('/addMove',addMoveHandller)
+app.get('/getMovies',getMoveHandller)
 app.get("*",errorHandller)
 app.use(errorHandller)
 
 function dataHandller(req,res){
-    let newdatajson=new jsonData(spiderData.title,spiderData.poster_path,spiderData.overview)
+    let newdatajson=new JsonData(spiderData.title,spiderData.poster_path,spiderData.overview)
         res.json(newdatajson);    
 }
 
@@ -33,7 +42,7 @@ let URL=`https://api.themoviedb.org/3/trending/all/week?api_key=${apikey}&langua
 axios.get(URL)
 .then((result)=>{
     let dataMoves =result.data.results.map((move)=>{
-        return new dataMovesConstructot(move.id,move.title,move.release_date,move.poster_path,move.overview)  
+        return new Trending(move.id,move.title,move.release_date,move.poster_path,move.overview)  
     })
     res.json(dataMoves)
 })
@@ -60,7 +69,7 @@ let URL=`https://api.themoviedb.org/3/movie/now_playing?api_key=${apikey}&langua
 axios.get(URL)
 .then((result)=>{
     let playingData =result.data.results.map((playMove)=>{
-        return new nowPlaying(playMove.id,playMove.original_title,playMove.original_language,playMove.overview)  
+        return new NowPlaying(playMove.id,playMove.original_title,playMove.original_language,playMove.overview)  
     })
     res.json(playingData)
 })
@@ -68,14 +77,13 @@ axios.get(URL)
     errorHandller(error,req,res);
 })
 }
-
 function airingTodayHandller(req,res){
  
 let URL=`https://api.themoviedb.org/3/tv/airing_today?api_key=${apikey}&language=en-US&page=1`;
 axios.get(URL)
 .then((result)=>{
     let dataAiring =result.data.results.map((airToday)=>{
-        return new airingToday(airToday.id,airToday.name,airToday.original_language)  
+        return new AiringToday(airToday.id,airToday.name,airToday.original_language)  
     })
     res.json(dataAiring)
 })
@@ -83,39 +91,61 @@ axios.get(URL)
     errorHandller(error,req,res);
 })
 }
+function addMoveHandller(req,res){ 
+    let {title,overview,imag}=req.body //destructuring
+let sql=`INSERT INTO trending_moves(title, overview, imag)
+VALUES ($1,$2,$3) RETURNING *;`
+let values=[title,overview,imag]
+   client.query(sql,values).then((result)=>{
 
+   // res.status(201).send("data saved in Dada Base")
+    res.status(201).json(result.rows);
+
+   })
+    .catch()
+}
+
+function getMoveHandller (req,res){
+    let sql=`SELECT * FROM trending_moves;`;
+    client.query(sql).then((result)=>{
+       // console.log(result);
+        res.json(result.rows);
+    }).catch();
+}
 function errorHandller(req,res){
     res.status(404).send("server error 404")
 }
-app.listen(port,()=>{console.log("hello" ,port);})
-
 function errorHandller(err,req,res){
-    res.status(500).send(err)
+    res.status(500).send(err);
 }
 
-function jsonData(title,poster_path,overview){
+
+function JsonData(title,poster_path,overview){
     this.title=title;
     this.poster_path=poster_path;
     this.overview=overview;
 }
-function dataMovesConstructot (id,title,release_date,poster_path,overview){
+function Trending (id,title,release_date,poster_path,overview){
 this.id=id;
 this.title=title;
 this.release_date=release_date;
 this.poster_path=poster_path;
 this.overview=overview;
 }
-function nowPlaying(id,original_title,original_language,overview){
+function NowPlaying(id,original_title,original_language,overview){
     this.id=id;
     this.original_title=original_title;
     this.original_language=original_language;
     this.overview=overview;
 }
-function airingToday(id,name,original_language){
+function AiringToday(id,name,original_language){
     this.id=id;
     this.name=name;
     this.original_language=original_language;
     
 }
+client.connect().then(()=>{
+    app.listen(port,()=>{console.log("hello" ,port);})
 
+}).catch()
 

@@ -4,11 +4,11 @@
 
 ## WRRC
 
-![WRRC imge](API.jpg)
+![WRRC imge](DataBase.jpg)
 
 ## Overview
 
-this code creat a server by using the **express framwork** then run the server by using the **nodemon** after that check if the server is ready to working now you can send any requset you need to the server then the server send the request to the 3party API after that send the respons to the server then the server send the respons to the clint  
+this code creat a server by using the **express framwork** then run the server by using the **nodemon** after that check if the server is ready to working now you can send any requset you need to the server after that send request to pot data in tha  data base by send the rerquest to the server then the server send another request to the database to insert data inside it after that you can send anothe requset to get the data from data base by send the server another request to the database to SELECT the data
 
 ## Getting Started
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
@@ -29,7 +29,7 @@ this code creat a server by using the **express framwork** then run the server b
 `app.lesten(port,()=>{consol.log("srever is run")})`Check here if the server is running and ready to starts working
 8-write the rout with method get then creat the function
 app.method(endpath,handllerfunction)
-function handllerfunction(req,res){
+function handllerfunction(req,res)
 `let URL=https://api.themoviedb.org/3/trending/all/week?api_key=${apikey}&language=en-US`get the API and the API KEY
 `axios.get(URL)` creat the promis using the axios
 `.then((result)=>{res.json(dataMoves)})` if the server get respons show me the data in res.json
@@ -38,7 +38,20 @@ function handllerfunction(req,res){
     9-open the thunder clint :
     select the method what you wont |http://locallhost:#port/endpath
     click send 
+    //if i need Insert data inside database by the serever
+    1-creat the database `psql CREAT DATABASE databasename`
+    2-creat the table inside the vs by creat the file.sql inside the file creat the table CREAT TABLE tablename (
+        cloumn datatype 
+        ..
+        ,.
+    )
+    conect the table with database by using command `psql -d databasename -file.sql`
+3-send the data from clint to the server then from the server to the D.B after convert data to the JSON  data 
+4-use the query INSERT and POST method to send data to the server and save the data in D.B
+5-conect the server with the database then insert the the data inside  
+6-in the end get the same data from database by using the method get and SELECT query then send the request to the server then server get the data from database  
+
 
 ## Project Features
 <!-- What are the features included in you app -->
-When you are send a request to the server then the server get the respons from the API after that send the respons to the clint   
+send the data what i need to the server to pot it inside the database by using the INSERT query then get the data from database by using SELECT query
