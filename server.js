@@ -26,7 +26,7 @@ app.post('/addMove',addMoveHandller)
 app.get('/getMovies',getMoveHandller)
 app.put('/UPDATE/:id',updateMoveHandller)
 app.delete('/DELETE/:id',deletMoveHandller)
-app.get('getMovie/:id',getMoveByidHandller)
+app.get('/getMovie/:id',getMoveByidHandller)
 app.get("*",errorHandller)
 app.use(errorHandller)
 
@@ -137,7 +137,9 @@ function updateMoveHandller(req,res){
         }).catch();
     }
 function getMoveByidHandller(req,res){
-    let moveId=req.param.id;
+    let moveId=req.params.id;
+    console.log(moveId)
+    console.log("hi")
     let sql=`SELECT * FROM trending_moves WHERE id=$1;`;
     let values=[moveId];
     client.query(sql,values).then((result)=>{
