@@ -24,6 +24,9 @@ app.get('/now_playing', nowPlayHandller)
 app.get('/tv-airing-today', airingTodayHandller)
 app.post('/addMove',addMoveHandller)
 app.get('/getMovies',getMoveHandller)
+app.put('/UPDATE/:id',updateMoveHandller)
+app.delete('/DELETE/:id',deletMoveHandller)
+app.get('/getMovie/:id',getMoveByidHandller)
 app.get("*",errorHandller)
 app.use(errorHandller)
 
@@ -92,10 +95,10 @@ axios.get(URL)
 })
 }
 function addMoveHandller(req,res){ 
-    let {title,overview,imag}=req.body //destructuring
-let sql=`INSERT INTO trending_moves(title, overview, imag)
-VALUES ($1,$2,$3) RETURNING *;`
-let values=[title,overview,imag]
+    let {title,comments}=req.body //destructuring
+let sql=`INSERT INTO trending_moves(title,comments)
+VALUES($1,$2) RETURNING *;`
+let values=[title,comments]
    client.query(sql,values).then((result)=>{
 
    // res.status(201).send("data saved in Dada Base")
@@ -109,6 +112,37 @@ function getMoveHandller (req,res){
     let sql=`SELECT * FROM trending_moves;`;
     client.query(sql).then((result)=>{
        // console.log(result);
+        res.json(result.rows);
+    }).catch();
+}
+function updateMoveHandller(req,res){
+    let moveId=req.params.id;
+    let { title,comments}=req.body;
+    console.log(title,comments)
+    let sql=`UPDATE trending_moves SET title = $1, comments=$2
+    WHERE id=$3 RETURNING *;`
+    let values=[ title,comments,moveId];
+
+    client.query(sql,values).then(result=>{
+       // console.log("hi")
+        res.send(result.rows)
+    }).catch();}
+
+    function deletMoveHandller(req,res){
+        let {id}=req.params;
+        let sql=`DELETE FROM trending_moves WHERE id=$1;`
+        let values=[id];
+        client.query(sql,values).then(result=>{
+            res.status(204).send("delete")
+        }).catch();
+    }
+function getMoveByidHandller(req,res){
+    let moveId=req.params.id;
+    console.log(moveId)
+    console.log("hi")
+    let sql=`SELECT * FROM trending_moves WHERE id=$1;`;
+    let values=[moveId];
+    client.query(sql,values).then((result)=>{
         res.json(result.rows);
     }).catch();
 }
