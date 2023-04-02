@@ -4,7 +4,7 @@ const cors=require('cors');
 const axios =require('axios');
 const bodyParser = require('body-parser')
 const { Client } = require('pg')
-let url=`postgres://maysaa:0000@localhost:5432/moves`
+let url=process.env.url;
 const client = new Client(url)
 const app= express();
 app.use(cors());
