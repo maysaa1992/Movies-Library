@@ -27,8 +27,8 @@ app.get('/getMovies',getMoveHandller)
 app.put('/UPDATE/:id',updateMoveHandller)
 app.delete('/DELETE/:id',deletMoveHandller)
 app.get('/getMovie/:id',getMoveByidHandller)
-app.get("*",errorHandller)
-app.use(errorHandller)
+// app.get("*",errorHandller)
+// app.use(errorHandller)
 
 function dataHandller(req,res){
     let newdatajson=new JsonData(spiderData.title,spiderData.poster_path,spiderData.overview)
@@ -49,9 +49,7 @@ axios.get(URL)
     })
     res.json(dataMoves)
 })
-.catch((error)=>{
-    errorHandller(error,req,res);
-})
+.catch(err=>{consolo.log(err)})
 }
 
 function searchHandller(req,res){
@@ -61,9 +59,7 @@ axios.get(URL)
 .then((result)=>{
     res.json(result.data.results);
 })
-.catch((error)=>{
-    errorHandller(error,req,res);
-})
+.catch(err=>{consolo.log(err)})
 }
 
 function nowPlayHandller(req,res){
@@ -76,9 +72,7 @@ axios.get(URL)
     })
     res.json(playingData)
 })
-.catch((error)=>{
-    errorHandller(error,req,res);
-})
+.catch(err=>{consolo.log(err)})
 }
 function airingTodayHandller(req,res){
  
@@ -90,9 +84,7 @@ axios.get(URL)
     })
     res.json(dataAiring)
 })
-.catch((error)=>{
-    errorHandller(error,req,res);
-})
+.catch(err=>{consolo.log(err)})
 }
 function addMoveHandller(req,res){ 
     let {title,comments}=req.body //destructuring
@@ -105,7 +97,8 @@ let values=[title,comments]
     res.status(201).json(result.rows);
 
    })
-    .catch()
+
+   .catch(err=>{consolo.log(err)})
 }
 
 function getMoveHandller (req,res){
@@ -113,7 +106,7 @@ function getMoveHandller (req,res){
     client.query(sql).then((result)=>{
        // console.log(result);
         res.json(result.rows);
-    }).catch();
+    }).catch(err=>{consolo.log(err)})
 }
 function updateMoveHandller(req,res){
     let moveId=req.params.id;
@@ -126,7 +119,7 @@ function updateMoveHandller(req,res){
     client.query(sql,values).then(result=>{
        // console.log("hi")
         res.send(result.rows)
-    }).catch();}
+    }).catch(err=>{consolo.log(err)})}
 
     function deletMoveHandller(req,res){
         let {id}=req.params;
@@ -134,7 +127,7 @@ function updateMoveHandller(req,res){
         let values=[id];
         client.query(sql,values).then(result=>{
             res.status(204).send("delete")
-        }).catch();
+        }).catch(err=>{consolo.log(err)})
     }
 function getMoveByidHandller(req,res){
     let moveId=req.params.id;
@@ -144,14 +137,14 @@ function getMoveByidHandller(req,res){
     let values=[moveId];
     client.query(sql,values).then((result)=>{
         res.json(result.rows);
-    }).catch();
+    }).catch(err=>{consolo.log(err)})
 }
-function errorHandller(req,res){
-    res.status(404).send("server error 404")
-}
-function errorHandller(err,req,res){
-    res.status(500).send(err);
-}
+// function errorHandller(req,res){
+//     res.status(404).send("server error 404")
+// }
+// function errorHandller(err,req,res){
+//     res.status(500).send(err);
+// }
 
 
 function JsonData(title,poster_path,overview){
