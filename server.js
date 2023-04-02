@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 require('dotenv').config();
-const port = process.env.port;
+const PORT = process.env.PORT;
 const apikey=process.env.api_key;
 const spiderData=require("./MovieData/data.json");
 
@@ -119,7 +119,8 @@ function updateMoveHandller(req,res){
     client.query(sql,values).then(result=>{
        // console.log("hi")
         res.send(result.rows)
-    }).catch(err=>{consolo.log(err)})}
+    }).catch(err=>{consolo.log(err)})
+}
 
     function deletMoveHandller(req,res){
         let {id}=req.params;
@@ -172,7 +173,7 @@ function AiringToday(id,name,original_language){
     
 }
 client.connect().then(()=>{
-    app.listen(port,()=>{console.log("hello" ,port);})
+    app.listen(PORT,()=>{console.log("hello" ,PORT);})
 
 }).catch()
 
